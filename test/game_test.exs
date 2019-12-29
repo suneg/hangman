@@ -65,14 +65,22 @@ defmodule GameTest do
     assert game.game_state == :lost
   end
 
-  test "a guessed word is a won game" do 
+  test "a guessed word is a won game" do
+    moves = [
+      {"w", :good_guess},
+      {"i", :good_guess},
+      {"b", :good_guess},
+      {"l", :good_guess},
+      {"c", :bad_guess},
+      {"e", :won}
+    ]
+
     game = Game.new_game("wibble")
-    { game, _tally } = Game.make_move(game, "w")
-    { game, _tally } = Game.make_move(game, "i")
-    { game, _tally } = Game.make_move(game, "b")
-    { game, _tally } = Game.make_move(game, "l")
-    { game, _tally } = Game.make_move(game, "e")
-    assert game.game_state == :won
-    assert game.turns_left == 7
+
+    Enum.reduce(moves, game, fn ({guess, state}, acc) ->
+      { new_state, _ } = Game.make_move(acc, guess)
+      assert new_state.game_state == state
+      new_state
+    end)
   end
 end
