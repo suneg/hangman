@@ -28,16 +28,28 @@ defmodule Hangman.Game do
     { game, tally(game) }
   end
 
-  def accept_move(game, guess, _already_guessed = true) do
+  def tally (game) do
+    %{
+      game_state: game.game_state,
+      turns_left: game.turns_left,
+      letters: game.letters |> reveal_guessed(game.used)
+    }
+  end
+
+
+  # ---------------------------------------------
+
+
+  defp accept_move(game, guess, _already_guessed = true) do
     Map.put(game, :game_state, :already_used)
   end
 
-  def accept_move(game, guess, _already_guessed) do
+  defp accept_move(game, guess, _already_guessed) do
     Map.put(game, :used, MapSet.put(game.used, guess))
     |> score_guess(Enum.member?(game.letters, guess))
   end
 
-  def score_guess(game, _good_guess = true) do
+  defp score_guess(game, _good_guess = true) do
     #won?
     new_state = MapSet.new(game.letters)
     |> MapSet.subset?(game.used)
@@ -46,21 +58,25 @@ defmodule Hangman.Game do
     Map.put(game, :game_state, new_state)
   end
 
-  def score_guess(game = %{ turns_left: 1}, _not_good_guess) do
+  defp score_guess(game = %{ turns_left: 1}, _not_good_guess) do
     Map.put(game, :game_state, :lost)
   end
 
-  def score_guess(game = %{ turns_left: turns_left}, _not_good_guess) do
+  defp score_guess(game = %{ turns_left: turns_left}, _not_good_guess) do
     %{ game |
       game_state: :bad_guess,
       turns_left: turns_left - 1
     }
   end
 
-  def maybe_won(true), do: :won
-  def maybe_won(_), do: :good_guess
+  defp maybe_won(true), do: :won
+  defp maybe_won(_), do: :good_guess
 
-  def tally (game) do
-    123
+  defp reveal_guessed(letters, used) do
+    letters
+    |> Enum.map(fn letter -> reveal_letter(letter, MapSet.member?(used, letter)) end)
   end
+
+  defp reveal_letter(letter, _in_word = true), do: letter
+  defp reveal_letter(letter, _not_in_word), do: "_"
 end
