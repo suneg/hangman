@@ -15,7 +15,8 @@ defmodule Hangman.Game do
   end
 
   def new_game() do
-    new_game(Dictionary.random_word)
+    words = Dictionary.start()
+    new_game(Dictionary.random_word(words))
   end
 
   def make_move(game = %{ game_state: state }, _guess)
