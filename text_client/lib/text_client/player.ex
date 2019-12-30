@@ -7,7 +7,7 @@ defmodule TextClient.Player do
   end
 
   def play(game = %State{ tally: %{ game_state: :lost } }) do
-    exit_with_message("Sorry, you LOST!\nSecret word was '#{game.game_service.letters}''")
+    exit_with_message("Sorry, you LOST!\nSecret word was '#{game.game_service.letters}'")
   end
 
   def play(game = %State{ tally: %{ game_state: :good_guess } }) do
@@ -37,14 +37,6 @@ defmodule TextClient.Player do
     |> Prompter.accept_move()
     |> Mover.make_move()
     |> play
-  end
-
-  defp prompt(game) do
-    game
-  end
-
-  defp make_move(game) do
-    game
   end
 
   defp exit_with_message(message) do
