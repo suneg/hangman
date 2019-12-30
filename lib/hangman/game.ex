@@ -24,7 +24,10 @@ defmodule Hangman.Game do
   end
 
   def make_move(game, guess) do
-    accept_move(game, guess, MapSet.member?(game.used, guess))
+    case String.match?(guess, ~r{^[a-z]$}) do
+      true -> accept_move(game, guess, MapSet.member?(game.used, guess))
+      false -> Map.put(game, :game_state, :invalid_guess)
+    end
   end
 
   def tally (game) do

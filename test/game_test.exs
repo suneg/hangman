@@ -83,4 +83,22 @@ defmodule GameTest do
       new_state
     end)
   end
+
+  test "only allow a valid ascii character when guessing" do
+
+    invalid_guesses = [
+      "?",
+      "ab",
+      "2",
+      "ø",
+      "A"
+    ]
+
+    for guess <- invalid_guesses do
+      game = Game.new_game("wibble")
+      |> Game.make_move(guess)
+
+      assert game.game_state == :invalid_guess
+    end
+  end
 end
