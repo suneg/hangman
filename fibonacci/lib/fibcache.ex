@@ -1,27 +1,35 @@
 defmodule FibCache do
-  def use(getAndUpdate) do
-    {:ok, pid} = Agent.start_link(fn -> %{0 => 0, 1 => 1} end)
-    result = getAndUpdate.(pid)
-    Agent.stop(pid)
-    result
+  
+  use Application
+
+  @me __MODULE__
+
+  def start(_type, _args) do
+    Agent.start_link(fn -> %{0 => 0, 1 => 1} end, name: @me)
   end
 
-  def lookup(cache, n) do
-    lookup_in_cache(cache, n)
-    |> compute_if_not_in_cache(cache, n)
+  def lookup(n, compute) do
+    lookup_in_cache(n)
+    |> compute_if_not_in_cache(n, compute)
+    |> store_in_cache(n)
   end
 
-  defp lookup_in_cache(cache, n) do
-    Agent.get(cache, fn x -> x[n] end)
+  defp lookup_in_cache(n) do
+    Agent.get(@me, fn x -> x[n] end)
   end
 
-  defp compute_if_not_in_cache(nil, cache, n) do
-    value = lookup(cache, n-1) + lookup(cache, n-2)
-    Agent.get_and_update(cache, fn x -> {x, Map.put(x, n, value)} end)
+  defp store_in_cache({ _found_in_cache = false, value }, n) do
+    Agent.update(@me, fn x -> Map.put(x, n, value) end)
     value
+  end
+
+  defp store_in_cache({ _, value}, _), do: value
+
+  defp compute_if_not_in_cache(nil, n, compute) do
+    { false, compute.(n) }
   end
 
   defp compute_if_not_in_cache(value, _, _) do
-    value
+    { true, value }
   end
 end

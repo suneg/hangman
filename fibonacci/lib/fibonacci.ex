@@ -1,8 +1,10 @@
 defmodule Fibonacci do
 
   def fib(n) do
-    FibCache.use(fn cache ->
-      FibCache.lookup(cache, n)
-    end)
+    FibCache.lookup(n, &compute/1)
+  end
+
+  defp compute(n) do
+    fib(n-1) + fib(n-2)
   end
 end
