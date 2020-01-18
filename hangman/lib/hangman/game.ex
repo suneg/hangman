@@ -43,6 +43,10 @@ defmodule Hangman.Game do
 
 
   # ---------------------------------------------
+  defp return_with_tally(game = %{ game_state: state}) when state in [ :won, :lost ] do 
+    { game, tally(game) |> Map.put(:letters, game.letters) }
+  end
+
   defp return_with_tally(game), do: { game, tally(game) }
 
   defp accept_move(game, _guess, _already_guessed = true) do
