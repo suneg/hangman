@@ -6,7 +6,7 @@ defmodule TextClient.Player do
     exit_with_message("You WON!")
   end
 
-  def play(game = %State{ tally: tally = %{ game_state: :lost } }) do
+  def play(%State{ tally: tally = %{ game_state: :lost } }) do
     exit_with_message("Sorry, you LOST!\nSecret word was '#{tally.letters}'")
   end
 
