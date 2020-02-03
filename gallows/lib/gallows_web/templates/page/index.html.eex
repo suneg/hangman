@@ -1,6 +1,6 @@
 <div class="jumbotron">
   <pre>
-    <%= plural_of("egg", 1) %><br/>
+    <%= plural_of(@produce, @count) %><br/>
     <%= plural_of("car", 2) %><br>
     <%= plural_of("hat", 3) %><br/>
     <%= plural_of("cup", -3) %><br/>
