@@ -1,7 +1,6 @@
 Game Field
 
-
-<%= inspect @tally %>
+<%= game_state(@tally.game_state) %>
 
 <p>
 Turns left: <%= @tally.turns_left %>
@@ -11,7 +10,17 @@ Turns left: <%= @tally.turns_left %>
   Word so far: <%= display_letters(@tally.letters) %>
 </p>
 
-<form>
-
+<form method="post" action="/test">
+<input type="submit" value="test">
 </form>
-<%= %>
+
+<%= if game_over?(@tally) do %>
+  <%= new_game_button(@conn) %>
+<% else %>
+  <%= form_for(@conn, hangman_path(@conn, :make_move), [ as: :make_move, method: :put ], fn f -> %>
+  <%= text_input(f, :guess) %>
+
+  <%= submit("Make next move") %>
+  
+  <% end)%>
+<%end %>
